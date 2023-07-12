@@ -1,0 +1,80 @@
+﻿@page "/"
+@using System
+
+<h3>Guess the Number</h3>
+
+@if (showResult)
+{
+    <p>@resultMessage</p>
+    @if (!gameOver)
+    {
+        <button class="btn btn-primary" @onclick="ResetGame">Play Again</button>
+    }
+}
+else
+{
+    @if (!gameOver)
+    {
+        <p>Attempts Left: @attemptsLeft</p>
+        <p>Enter your guess (between 1 and 100):</p>
+        <input type="number" @bind="@guess" />
+        <button class="btn btn-primary" @onclick="CheckGuess">Check</button>
+    }
+    else
+    {
+        <p>Game Over! You ran out of attempts.</p>
+        <button class="btn btn-primary" @onclick="ResetGame">Play Again</button>
+    }
+}
+
+@code {
+    private int randomNumber;
+    private int guess;
+    private int attemptsLeft = 5;
+    private bool showResult;
+    private bool gameOver;
+    private string resultMessage;
+
+    protected override void OnInitialized()
+    {
+        ResetGame();
+    }
+
+    private void ResetGame()
+    {
+        Random random = new Random();
+        randomNumber = random.Next(1, 101);
+        guess = 0;
+        attemptsLeft = 5;
+        showResult = false;
+        gameOver = false;
+        resultMessage = string.Empty;
+    }
+
+    private void CheckGuess()
+    {
+        attemptsLeft--;
+
+        if (guess == randomNumber)
+        {
+            resultMessage = "Congratulations! You guessed the correct number.";
+            gameOver = true;
+        }
+        else if (guess < randomNumber)
+        {
+            resultMessage = "Too low! Try again.";
+        }
+        else
+        {
+            resultMessage = "Too high! Try again.";
+        }
+
+        if (attemptsLeft == 0)
+        {
+            resultMessage = "Game Over! You ran out of attempts.";
+            gameOver = true;
+        }
+
+        showResult = true;
+    }
+}
